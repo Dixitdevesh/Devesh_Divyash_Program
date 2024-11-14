@@ -25,8 +25,10 @@ def listen():
     except Exception as e:
         print(f"Error: {e}")
         return ""
-
+def s(x=30):
+    time.sleep(x)
 def menu():
+    speak("Now Menu will Apear So It Take Some time to Initialize Perfectly... ")
     print("\n" + "="*30)
     print("  Jarvis Menu")
     print("="*30)
@@ -40,7 +42,7 @@ def menu():
     print("  7. Open Reddit 📖")
     print("  8. Search on Google 🔍")
     print("  9. Search on YouTube 🎥")
-    
+    s(5)
     print("\n  **Entertainment** 🎵")
     print("  10. Play Music 🎶")
     print("  11. Truth and Dare 😜")
@@ -49,23 +51,23 @@ def menu():
     print("  14. Solve a riddle 🧩")
     print("  15. Play rock-paper-scissors ✊")
     print("  16. Take a quiz 📝")
-    
+    s(5)
     print("\n  **Productivity** 📊")
     print("  17. Calculate 📝")
     print("  18. Create a new text file 📄")
     print("  19. View current date and time 🕒")
     print("  20. Set a timer ⏳")
-    
+    s(5)
     print("\n  **Applications** 📈")
     print("  21. Open Application 📊")
     print("  22. Close Application ❌")
-    
+    s(5)
     print("\n  **Help** 🤔")
     print("  23. Show Help")
-    
+    s(2)
     print("\n  **About** 🤔")
     print("  24. About Jarvis")
-    
+    s(2)
     print("\n  **Exit** 👋")
     print("  99. Exit Jarvis")
     print("="*30)
@@ -230,17 +232,35 @@ def open_application():
     }
     
     if app_name in apps:
-        os.startfile(apps[app_name])
-        speak(f"Opening {app_name}.")
+       try:
+           os.startfile(apps[app_name])
+           speak(f"Opening {app_name}.")
+           speak(f"{app_name} Successfully opened")
+       except Exception as e :
+           speak("Sorry ,Some error occured... ")
+    
     else:
-        speak("Sorry, I can't open that application.")
+        try:
+            os.startfile(f"{app_name}.exe")
+            speak("Successfully opened")
+        except Exception as e :
+            print("error occured ")
 
 def close_application():
     speak("Which application do you want to close?")
     app_name = listen().lower()
-    
-    os.system(f"taskkill /im {app_name}.exe")
-    speak(f"Closing {app_name}.")
+    if app_name == "notepad":
+        os.system(f"taskkill /im notepad.exe")
+        speak("Closed Successfully...")
+    elif app_name=="calculator":
+        os.system(f"taskkill /im calc.exe")
+        speak("Closed Successfully")
+    elif app_name=="paint":
+        os.system(f"taskkill /im mspaint.exe")
+        speak("Closed Succesfully")    
+    else:
+        os.system(f"taskkill /im {app_name}.exe")
+        speak(f"Closing {app_name}.")
 
 def calculate():
     speak("What calculation do you want to perform? Please say your expression.")
@@ -249,6 +269,7 @@ def calculate():
     try:
         result = eval(expression)
         speak(f"The result is {result}.")
+        print(f"Result is :{result}")
         print(f"Jarvis: The result is {result}.")
     except Exception as e:
         speak("There was an error with your calculation.")
@@ -283,11 +304,94 @@ def set_timer():
         print("Jarvis: Time's up! The timer has finished.")
     else:
         speak("Please say a valid number.")
+def truth_and_dare():
+    speak("Welcome to the Truth and Dare game!")
+    
+    speak("How many players are playing the game? Please Type ")
+    num_players= input(":").strip()
+    players = []
+
+    num_players=int(num_players)
+    for i in range(num_players):
+        speak(f"Player {i+1}, what is your name?")
+        print(f"Player {i+1}, please enter your name:")
+        player_name = listen()
+        players.append(player_name)
+    player = random.choice(players)
+    speak(f"{player}, it's your turn!")
+    print(f"{player}, it's your turn!")
+    def ch(player):
+      speak(f"{player}, would you like to choose truth or dare on your own, or would you like Jarvis to help you?")
+      print(f"{player}, do you want help from Jarvis? (yes/no)")
+    
+      choice = listen().lower()
+            
+      if "yes" in choice:
+            speak("Jarvis is helping you choose. Let's pick a random truth or dare!")
+            print(f"Jarvis is helping {player}...")
+            
+            speak("Jarvis gives you two options: truth or dare. Please choose one.")
+            print("Choose 'truth' or 'dare'.")
+            
+            player_choice = listen().lower()
+
+            if "truth" in player_choice:
+                truth_questions = [
+                    "What is your biggest fear?",
+                    "What is the most embarrassing thing you've ever done?",
+                    "What is your most awkward moment?",
+                    "What is something you’ve never told anyone?"
+                ]
+                question = random.choice(truth_questions)
+                speak(f"Your truth question is: {question}")
+                print(f"Truth: {question}")
+
+                answer = listen()
+                result = f"{player} answered: {answer}"
+
+            elif "dare" in player_choice:
+                dare_challenges = [
+                    "Do 10 pushups.",
+                    "Dance for 30 seconds.",
+                    "Act like a monkey for one minute.",
+                    "Sing a song loudly.",
+                    "Do an impression of someone you know."
+                ]
+                challenge = random.choice(dare_challenges)
+                speak(f"Your dare is: {challenge}")
+                print(f"Dare: {challenge}")
+
+                response = listen().lower()
+                if "done" in response:
+                    result = f"{player} completed the dare: {challenge}"
+                else:
+                    result = f"{player} skipped the dare: {challenge}"
+
+            else:
+                speak("Invalid choice. Please choose 'truth' or 'dare'.")
+                print(f"{player}, please choose 'truth' or 'dare'.")
+                return
+            with open("truth_and_dare_log.txt", "a") as file:
+                file.write(f"{datetime.datetime.now()} - {player} chose: {player_choice if 'truth' in player_choice or 'dare' in player_choice else 'truth or dare'} - {result}\n")
+                speak(f"I have saved your response, {player}")
+      else:
+            speak(f"Alright, {player}, make your choice. Truth or dare? , And complete this Round Without me ")
+            s(20)
+            speak("If this ROund is Completed then Shall be begin ..")
+            c=listen().lower()
+            if c=="yes":
+                pass
+            else :
+                command=listen().lower()
+    ch(player)            
+    
 
 def main():
     name = login()
+    menu()
+    speak("Listening.....")
     while True:
-        menu()
+        
         command = listen().lower()
         
         if "open google" in command:
@@ -321,7 +425,8 @@ def main():
             webbrowser.open(f"https://www.youtube.com/results?search_query={song_name}")
             speak(f"Playing {song_name} on YouTube.")
         elif "truth and dare" in command:
-            speak("Let's play Truth and Dare! Please choose truth or dare.")
+            speak("Let's play Truth and Dare! .")
+            truth_and_dare()
         elif "chat with me" in command:
             chat()
         elif "play a number guessing game" in command:
@@ -334,6 +439,7 @@ def main():
             take_quiz()
         elif "calculate" in command:
             calculate()
+            s(10)
         elif "create a new text file" in command:
             create_text_file()
         elif "view current date and time" in command:
@@ -347,6 +453,7 @@ def main():
         elif "show help" in command:
             speak("This is the help menu.")
             print("Help menu options...")
+            menu()
         elif "about" in command:
             about()
         elif "exit" in command:
@@ -355,5 +462,6 @@ def main():
         else:
             print("I'm sorry, I didn't understand that.")
 
+    
 if __name__ == "__main__":
     main()
